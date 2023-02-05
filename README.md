@@ -1,2 +1,2 @@
 # Search_in_Django
-Implement a feature that allows users to search for products based on category and price range, and retrieve the matching products along with their respective details, with authentication using JWT and data stored in a MySQL database.
+Implementation of a feature that allows users to search for products based on category and price range, and retrieve the matching products along with their respective details, with authentication using JWT and data stored in a MySQL database.
