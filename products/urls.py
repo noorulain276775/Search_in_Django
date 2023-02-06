@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterUser, ProductsApiView, ProductApiView
+from .views import RegisterUser, ProductsApiView, ProductApiView, ProductCreation
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -17,5 +17,6 @@ urlpatterns = [
 
     # JWT secured view of Products
     path('products', ProductsApiView.as_view()),
+    path('products/create', ProductCreation.as_view() ),
     path('products/<int:id>', ProductApiView.as_view())
 ]
