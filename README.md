@@ -36,6 +36,6 @@ Run this command so that the workbench can store the passwords
 
 
 ## MySQL Client in Django
-$ pip install ez_setup
-$ sudo apt-get install python3-dev libmysqlclient-dev
-$ pip3 install mysqlclient
+1. $ pip install ez_setup
+2. $ sudo apt-get install python3-dev libmysqlclient-dev
+3. $ pip3 install mysqlclient
