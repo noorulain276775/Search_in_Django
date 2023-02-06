@@ -1,5 +1,6 @@
 
 from pathlib import Path
+import datetime
 
 # Initialise environment variables
 import environ
@@ -73,13 +74,22 @@ DATABASES = {
     }
 }
 
-# jwt_auth/settings.py
+
+# Configure the authentication in Django Rest Framework to be JWT
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
 }
 
+# Configure the JWTs to expire after 1 hour, and allow users to refresh near-expiration tokens
+JWT_AUTH = {
+    'JWT_VERIFY': True,
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -104,3 +114,7 @@ USE_I18N = True
 USE_TZ = True
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Custom User model
+AUTH_USER_MODEL = 'products.User'
