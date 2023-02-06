@@ -20,7 +20,7 @@ Implementation of a feature that allows users to search for products based on ca
 
 #### It is not recommended to use the root user for security reasons, so create another user using the root login and work with that.
 mysql> CREATE USER 'write-username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'write-password'; <br>
-mysql> GRANT CREATE, ALTER, DROP, INSERT, UPDATE, INDEX, DELETE, SELECT, REFERENCES, RELOAD on *.* TO 'sammy'@'localhost' WITH GRANT OPTION; <br>
+mysql> GRANT CREATE, ALTER, DROP, INSERT, UPDATE, INDEX, DELETE, SELECT, REFERENCES, RELOAD on *.* TO 'username'@'localhost' WITH GRANT OPTION; <br>
 mysql> FLUSH PRIVILEGES; <br>
 mysql> exit <br>
 mysql> mysql -u username -p <br>
