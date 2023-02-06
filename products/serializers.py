@@ -8,11 +8,16 @@ class ProductsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-## Passwords are hashed here
+## Passwords are also hashed in this serializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+        # Password is not shown in API Response
+        extra_kwargs ={
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
