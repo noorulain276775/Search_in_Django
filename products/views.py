@@ -9,6 +9,11 @@ from .models import *
 from .serializers import *
 
 
+class DynamicSearchFilter(filters.SearchFilter):
+    def get_search_fields(self, view, request):
+        return request.GET.getlist('search_fields', [])
+
+
 # User Registration View
 class RegisterUser(generics.GenericAPIView):
     def post(self, request):
@@ -26,9 +31,9 @@ class RegisterUser(generics.GenericAPIView):
 # Product API Views for GET-all products with search functionality
 class ProductsApiView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
+    filter_backends = (DynamicSearchFilter, DjangoFilterBackend, filters.OrderingFilter )
     queryset = Products.objects.all()
     serializer_class = ProductsSerializer
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     search_fields = ['category', 'brand', 'price', 'name',
                      'quantity', 'created_at', 'rating']
     ordering_fields = ['price', 'quantity', 'rating']
