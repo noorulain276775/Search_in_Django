@@ -10,13 +10,16 @@ from .models import *
 from .serializers import *
 
 
-# Search Filter
+""""
+------------------------------ PRODUCT FILTER AND SEARCH FUNCTIONALITY IMPLEMENTED ---------------------------------
+"""
+# Dynamic Search Filter
 class DynamicSearchFilter(filters.SearchFilter):
     def get_search_fields(self, view, request):
         return request.GET.getlist('search_fields', [])
 
 
-## Range Filters
+## Range Filters for Price and Quantity
 class ProductPriceQuantityFilter(FilterSet):
     price = RangeFilter()
     quantity = RangeFilter()
@@ -25,6 +28,9 @@ class ProductPriceQuantityFilter(FilterSet):
         model = Products
         fields = ['price', 'quantity']
 
+""""
+------------------------------ REGISTRATION ---------------------------------------
+"""
 
 # User Registration View
 class RegisterUser(generics.GenericAPIView):
@@ -39,6 +45,11 @@ class RegisterUser(generics.GenericAPIView):
         except:
             raise APIException('Something went wrong')
 
+
+""""
+------------------------------ REST API VIEWS FOR PRODUCTS ---------------------------------------
+------------------------------ SEARCH FUNCTIONALITY FOR PRODUCTS ---------------------------------------
+"""
 
 # Product API Views for GET-all products with search functionality
 class ProductsApiView(generics.ListAPIView):
@@ -77,3 +88,73 @@ class ProductApiView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response(serializer.data)
 
+
+""""
+------------------------------ FOR CART ---------------------------------------
+"""
+# cartItem API Views for GET-all the CARTITEMS
+class CartItemsApiView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+
+# cartItem API Views for putting a product Item in the cart
+class CartItemCreation(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+    def perform_create(self, serializer):
+        return serializer.save()
+
+
+# cartItem API VIEW for GET-ONE cartItem with update and delete
+class CartItemApiView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CartItem.objects.all()
+    lookup_field= "id"
+
+    def get_queryset(self):
+        return CartItem.objects.filter()
+
+    def update(self, request, id):
+        queryset = CartItem.objects.filter(id=id).first()
+        serializer = CartItemSerializer(queryset, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+""""
+------------------------------ FOR CART ITEMS ---------------------------------------
+"""
+# cartItem API Views for GET-all the CARTITEMS
+class CartItemsApiView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+
+# cartItem API Views for putting a product Item in the cart
+class CartItemCreation(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+    def perform_create(self, serializer):
+        return serializer.save()
+
+
+# cartItem API VIEW for GET-ONE cartItem with update and delete
+class CartItemApiView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CartItem.objects.all()
+    lookup_field= "id"
+
+    def get_queryset(self):
+        return CartItem.objects.filter()
+
+    def update(self, request, id):
+        queryset = CartItem.objects.filter(id=id).first()
+        serializer = CartItemSerializer(queryset, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)

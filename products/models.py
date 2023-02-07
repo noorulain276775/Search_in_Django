@@ -42,6 +42,10 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+    def __str__(self):
+        return self.user.first_name
+
+
 class CartItem(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
@@ -51,4 +55,6 @@ class CartItem(models.Model):
         return self.product.price * self.quantity
 
     def __str__(self):
-        return self.client + " - " + self.product
+        return self.product.name + " - " + self.product.price + " - " + self.quantity
+
+
