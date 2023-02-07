@@ -1,6 +1,7 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import filters
+from django_filters import FilterSet, RangeFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.exceptions import APIException
@@ -9,9 +10,20 @@ from .models import *
 from .serializers import *
 
 
+# Search Filter
 class DynamicSearchFilter(filters.SearchFilter):
     def get_search_fields(self, view, request):
         return request.GET.getlist('search_fields', [])
+
+
+## Range Filters
+class ProductPriceQuantityFilter(FilterSet):
+    price = RangeFilter()
+    quantity = RangeFilter()
+
+    class Meta:
+        model = Products
+        fields = ['price', 'quantity']
 
 
 # User Registration View
@@ -32,6 +44,7 @@ class RegisterUser(generics.GenericAPIView):
 class ProductsApiView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = (DynamicSearchFilter, DjangoFilterBackend, filters.OrderingFilter )
+    filterset_class = ProductPriceQuantityFilter
     queryset = Products.objects.all()
     serializer_class = ProductsSerializer
     search_fields = ['category', 'brand', 'price', 'name',

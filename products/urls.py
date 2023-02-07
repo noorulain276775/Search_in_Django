@@ -18,5 +18,6 @@ urlpatterns = [
     # JWT secured view of Products
     path('products', ProductsApiView.as_view()),
     path('products/create', ProductCreation.as_view() ),
-    path('products/<int:id>', ProductApiView.as_view())
+    path('products/<int:id>', ProductApiView.as_view()),
+
 ]
