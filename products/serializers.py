@@ -40,13 +40,10 @@ class CartSerializer(serializers.ModelSerializer):
 
 class CartItemCreateSerializer(serializers.ModelSerializer):
     total_price = serializers.SerializerMethodField()
-    cart = serializers.PrimaryKeyRelatedField(
-        read_only=True, default=serializers.CurrentUserDefault())
-
     class Meta:
         model = CartItem
         fields = '__all__'
-        depth = 2
+        depth = 1
 
     def get_total_price(self, cartitems: CartItem):
         return cartitems.quantity * cartitems.product.price

@@ -100,14 +100,22 @@ class CartCreation(generics.CreateAPIView):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
     def perform_create(self, serializer, **kwargs):
-        print(self.request.user )
-        kwargs['user'] = self.request.user
-        return serializer.save(**kwargs) 
+        if not Cart.objects.filter(user=self.request.user).first():
+            kwargs['user'] = self.request.user
+            return serializer.save(**kwargs)
+        else:
+            return Response(serializer.error_messages) 
 
 class CartView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = Cart.objects.all()
     serializer_class = CartSerializer
+    def get_queryset(self):
+        """
+        This view should return the cart
+        for the currently authenticated user.
+        """
+        user = self.request.user
+        return Cart.objects.filter(user=user)
 
 
 class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -133,16 +141,23 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class CartItemsCreation(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = CartItem.objects.all()
     serializer_class = CartItemCreateSerializer
     def perform_create(self, serializer, **kwargs):
+        print(self.request.user)
         kwargs['cart'] = Cart.objects.get(user=self.request.user)
         return serializer.save(**kwargs) 
 
 class CartItemView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = CartItem.objects.all()
-    serializer_class = CartItemCreateSerializer
+    serializer_class = CartItemSerializer
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the cart items
+        for the currently authenticated user.
+        """
+        user = self.request.user
+        return CartItem.objects.filter(cart__id__in=Cart.objects.filter(user=user))
 
 
 # cartItem API VIEW for GET-ONE cartItem with update and delete
