@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import filters
 from django_filters import FilterSet, RangeFilter
@@ -92,61 +93,62 @@ class ProductApiView(generics.RetrieveUpdateDestroyAPIView):
 """"
 ------------------------------ FOR CART ---------------------------------------
 """
-# cartItem API Views for GET-all the CARTITEMS
-class CartItemsApiView(generics.ListAPIView):
+# cartItem API Views for Adding Items in Cart
+
+class CartCreation(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = CartItem.objects.all()
-    serializer_class = CartItemSerializer
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    def perform_create(self, serializer, **kwargs):
+        print(self.request.user )
+        kwargs['user'] = self.request.user
+        return serializer.save(**kwargs) 
 
-
-# cartItem API Views for putting a product Item in the cart
-class CartItemCreation(generics.CreateAPIView):
+class CartView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = CartItem.objects.all()
-    serializer_class = CartItemSerializer
-    def perform_create(self, serializer):
-        return serializer.save()
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
 
 
-# cartItem API VIEW for GET-ONE cartItem with update and delete
-class CartItemApiView(generics.RetrieveUpdateDestroyAPIView):
+class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = CartItem.objects.all()
+    serializer_class= CartSerializer
     lookup_field= "id"
 
     def get_queryset(self):
-        return CartItem.objects.filter()
+        return Cart.objects.filter()
 
     def update(self, request, id):
-        queryset = CartItem.objects.filter(id=id).first()
-        serializer = CartItemSerializer(queryset, data=request.data, partial=True)
+        queryset = Cart.objects.filter(id=id).first()
+        serializer = CartSerializer(queryset, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
+
 """"
 ------------------------------ FOR CART ITEMS ---------------------------------------
 """
-# cartItem API Views for GET-all the CARTITEMS
-class CartItemsApiView(generics.ListAPIView):
+# cartItem API Views for Adding Items in Cart
+
+class CartItemsCreation(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = CartItem.objects.all()
-    serializer_class = CartItemSerializer
+    serializer_class = CartItemCreateSerializer
+    def perform_create(self, serializer, **kwargs):
+        kwargs['cart'] = Cart.objects.get(user=self.request.user)
+        return serializer.save(**kwargs) 
 
-
-# cartItem API Views for putting a product Item in the cart
-class CartItemCreation(generics.CreateAPIView):
+class CartItemView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = CartItem.objects.all()
-    serializer_class = CartItemSerializer
-    def perform_create(self, serializer):
-        return serializer.save()
+    serializer_class = CartItemCreateSerializer
 
 
 # cartItem API VIEW for GET-ONE cartItem with update and delete
 class CartItemApiView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = CartItem.objects.all()
+    serializer_class= CartItemCreateSerializer
     lookup_field= "id"
 
     def get_queryset(self):
@@ -154,7 +156,7 @@ class CartItemApiView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, id):
         queryset = CartItem.objects.filter(id=id).first()
-        serializer = CartItemSerializer(queryset, data=request.data, partial=True)
+        serializer = CartItemCreateSerializer(queryset, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

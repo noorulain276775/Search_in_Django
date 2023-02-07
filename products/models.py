@@ -38,23 +38,21 @@ class Products(models.Model):
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user=user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
-        return self.user.first_name
-
+        return self.user.username
 
 class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
-    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
-
-    def total_price(self):
-        return self.product.price * self.quantity
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.product.name + " - " + self.product.price + " - " + self.quantity
+        return self.product.name
+
+
 
 
