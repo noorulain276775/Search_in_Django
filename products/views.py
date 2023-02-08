@@ -4,11 +4,10 @@ from rest_framework.response import Response
 from rest_framework import filters
 from django_filters import FilterSet, RangeFilter
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.exceptions import APIException
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import *
 from .serializers import *
+from rest_framework.exceptions import PermissionDenied
 
 
 """"
@@ -164,9 +163,13 @@ class CartItemApiView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field= "id"
 
     def get_queryset(self):
-        return CartItem.objects.filter()
+        user = self.request.user
+        return CartItem.objects.filter(cart__id__in=Cart.objects.filter(user=user))
 
     def update(self, request, id):
+        cart_item = self.get_object()
+        if cart_item.cart.user != self.request.user:
+            raise PermissionDenied('You do not have permission to edit this cart item.')
         queryset = CartItem.objects.filter(id=id).first()
         serializer = CartItemCreateSerializer(queryset, data=request.data, partial=True)
         if serializer.is_valid():
