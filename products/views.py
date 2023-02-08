@@ -142,10 +142,14 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
 class CartItemsCreation(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CartItemCreateSerializer
+    queryset=CartItem.objects.all()
+
     def perform_create(self, serializer, **kwargs):
-        print(self.request.user)
-        kwargs['cart'] = Cart.objects.get(user=self.request.user)
-        return serializer.save(**kwargs) 
+        user = self.request.user
+        kwargs = self.request.data
+        cart = Cart.objects.filter(user=user).first()
+        return serializer.save(cart=cart, **kwargs)
+
 
 class CartItemView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
