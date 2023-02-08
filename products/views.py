@@ -34,18 +34,11 @@ class ProductPriceQuantityFilter(FilterSet):
 """
 
 # User Registration View
-class RegisterUser(generics.GenericAPIView):
-    def post(self, request):
-        try:
-            serializer = UserSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
-        except:
-            raise APIException('Something went wrong')
-
+class RegisterUser(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    def perform_create(self, serializer):
+        return serializer.save()
 
 """"
 ------------------------------ REST API VIEWS FOR PRODUCTS ---------------------------------------

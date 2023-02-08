@@ -1,12 +1,17 @@
 from django.urls import path
 from .views import *
+from rest_framework_swagger.views import get_swagger_view
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView
 )
 
+schema_view = get_swagger_view(title='Django APIs')
 urlpatterns = [
+    #Swagger url for api documentation
+    path('api_doc', schema_view),
 
     # JWT Authentication and User Registration
     path('login', TokenObtainPairView.as_view(), name='token_obtain_pair'),
